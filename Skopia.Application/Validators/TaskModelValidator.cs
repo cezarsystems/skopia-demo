@@ -1,15 +1,25 @@
 ﻿using FluentValidation;
+using Skopia.Application.Contracts;
 using Skopia.DTOs.Models.Request;
 
 namespace Skopia.Application.Validators
 {
     public class TaskModelValidator : AbstractValidator<TaskRequestDTO>
     {
-        public TaskModelValidator()
+        private readonly IProjectService _projectService;
+
+        public TaskModelValidator(IProjectService projectService)
         {
+            _projectService = projectService;
+
             RuleFor(x => x.ProjectId)
                 .NotEqual(0)
-                    .WithMessage("O identificador do projeto é inválido");
+                    .WithMessage("O identificador do projeto é inválido.");
+
+            RuleFor(x => x.ProjectId)
+                .MustAsync(async (id, ct) => await _projectService.Exists(id))
+                    .WithMessage("O projeto informado não existe.")
+                .When(x => x.ProjectId != 0);
 
             RuleFor(x => x.Name)
                 .NotEmpty()

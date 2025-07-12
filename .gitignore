@@ -4,7 +4,7 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 # Skopia
-Skopia.Api/DataBase/*.db
+Skopia.Api/DataBase
 
 # User-specific files
 *.rsuser

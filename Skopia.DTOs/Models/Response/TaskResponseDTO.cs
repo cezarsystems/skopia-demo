@@ -8,6 +8,7 @@
         public string Priority { get; set; }
         public string Status { get; set; }
         public DateTime? ExpirationData { get; set; }
+        public DateTime LastModified { get; set; }
         public string[] Comments { get; set; }
         public ProjectBasicInfoResponseDTO Project { get; set; }
     }

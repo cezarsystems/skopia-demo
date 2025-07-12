@@ -1,34 +1,36 @@
-﻿using Skopia.Domain.Contracts;
-using Skopia.Domain.Enums;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using Skopia.Application.Contracts;
+using Skopia.Domain.Contracts;
 using Skopia.Domain.Models;
 using Skopia.DTOs.Models.Request;
 using Skopia.DTOs.Models.Response;
+using Skopia.Infrastructure.Data;
 
 namespace Skopia.Application.Services
 {
-    public class ProjectService : IBasicApiOperations<ProjectRequestDTO, ProjectRequestDTO, ProjectResponseDTO, long>
+    public class ProjectService : IBasicApiOperations<ProjectRequestDTO, ProjectRequestDTO, ProjectResponseDTO, long>, IProjectService
     {
-        public Task<ProjectResponseDTO> CreateAsync(ProjectRequestDTO request)
+        private readonly SkopiaDbContext _dbContext;
+
+        private readonly IMapper _mapper;
+
+        public ProjectService(SkopiaDbContext dbContext, IMapper mapper)
         {
-            return Task.Run(() => new ProjectResponseDTO
-            {
-                Id = new Random().Next(1, 100000),
-                Name = request.Name,
-                Description = "Minha decrição de projeto!",
-                Tasks =
-                [
-                    new()
-                    {
-                        Name = "Tarefa pesada",
-                        Description = "Uma tarefa de teste",
-                        Comments =
-                        [
-                            "Comentário 1", "Comentário 2"
-                        ],
-                        Status = StatusEnum.Done.GetEnumDescription()
-                    }
-                ]
-            });
+            _dbContext = dbContext;
+            _mapper = mapper;
+        }
+
+        public async Task<ProjectResponseDTO> CreateAsync(ProjectRequestDTO request)
+        {
+            var newProject = _mapper.Map<ProjectModel>(request);
+            newProject.LastModified = DateTime.Now;
+            newProject.Tasks = [];
+
+            _dbContext.Projects.Add(newProject);
+            await _dbContext.SaveChangesAsync();
+
+            return _mapper.Map<ProjectResponseDTO>(newProject);
         }
 
         public Task<OperationResultModel> DeleteAsync(long id)
@@ -36,31 +38,30 @@ namespace Skopia.Application.Services
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<ProjectResponseDTO>> GetAllAsync()
+        public async Task<IEnumerable<ProjectResponseDTO>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            var projects = await _dbContext.Projects
+                .Include(p => p.Tasks)
+                .ToListAsync();
+
+            return _mapper.Map<IEnumerable<ProjectResponseDTO>>(projects);
         }
 
-        public Task<ProjectResponseDTO> GetByIdAsync(long id)
+        public async Task<ProjectResponseDTO> GetByIdAsync(long id)
         {
-            return Task.Run(() => new ProjectResponseDTO
-            {
-                Id = 69,
-                Name = "Projeto Piloto 0",
-                Tasks =
-                [
-                    new()
-                    {
-                        Name = "Tarefa 1",
-                        Description = "Uma tarefa de teste",
-                        Comments =
-                        [
-                            "Comentário 1", "Comentário 2"
-                        ],
-                        Status = StatusEnum.Done.GetEnumDescription()
-                    }
-                ]
-            });
+            var project = await _dbContext.Projects
+                .Include(p => p.Tasks)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (project == null)
+                return null;
+
+            return _mapper.Map<ProjectResponseDTO>(project);
+        }
+
+        public async Task<bool> Exists(long id)
+        {
+            return await _dbContext.Projects.AnyAsync(p => p.Id == id);
         }
 
         // Não há RN definida para atualização (update) de projetos

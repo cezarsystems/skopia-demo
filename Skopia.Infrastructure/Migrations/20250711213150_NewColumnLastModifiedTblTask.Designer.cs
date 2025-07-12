@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Skopia.Infrastructure.Data;
 
@@ -10,9 +11,11 @@ using Skopia.Infrastructure.Data;
 namespace Skopia.Infrastructure.Migrations
 {
     [DbContext(typeof(SkopiaDbContext))]
-    partial class SkopiaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250711213150_NewColumnLastModifiedTblTask")]
+    partial class NewColumnLastModifiedTblTask
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");

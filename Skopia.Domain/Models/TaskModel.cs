@@ -11,5 +11,6 @@
         public string[] Comments { get; set; }
         public long ProjectId { get; set; }
         public ProjectModel Project { get; set; }
+        public DateTime LastModified { get; set; }
     }
 }
