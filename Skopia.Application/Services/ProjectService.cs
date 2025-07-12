@@ -13,7 +13,6 @@ namespace Skopia.Application.Services
     public class ProjectService : IBasicApiOperations<ProjectRequestDTO, ProjectRequestDTO, ProjectResponseDTO, long>, IProjectService
     {
         private readonly SkopiaDbContext _dbContext;
-
         private readonly IMapper _mapper;
 
         public ProjectService(SkopiaDbContext dbContext, IMapper mapper)
@@ -31,6 +30,10 @@ namespace Skopia.Application.Services
             _dbContext.Projects.Add(newProject);
             await _dbContext.SaveChangesAsync();
 
+            await _dbContext.Entry(newProject)
+                .Reference(p => p.User)
+                .LoadAsync();
+
             return _mapper.Map<ProjectResponseDTO>(newProject);
         }
 
@@ -45,25 +48,24 @@ namespace Skopia.Application.Services
                 return OperationResultModel.Fail("Projeto não encontrado. Favor confirmar seu identificador.");
             }
 
-            var hasPendingTasks = project.Tasks.Any(t => t.Status == StatusEnum.P.ToString());
+            var hasPendingTasks = project.Tasks?.Any(t => t.Status == StatusEnum.P.ToString()) == true;
 
             if (hasPendingTasks)
             {
-                return OperationResultModel.Fail("Não é possível excluir o projeto, pois existem tarefas com status: Pendente");
+                return OperationResultModel.Fail("Não é possível excluir o projeto, pois existem tarefas com status: Pendente. Favor concluí-las ou removê-las antes da exclusão");
             }
 
             _dbContext.Projects.Remove(project);
-
             await _dbContext.SaveChangesAsync();
 
             return OperationResultModel.Ok();
         }
 
-
         public async Task<IEnumerable<ProjectResponseDTO>> GetAllAsync()
         {
             var projects = await _dbContext.Projects
                 .AsNoTracking()
+                .Include(p => p.User)
                 .Include(p => p.Tasks)
                 .ToListAsync();
 
@@ -73,6 +75,8 @@ namespace Skopia.Application.Services
         public async Task<ProjectResponseDTO> GetByIdAsync(long id)
         {
             var project = await _dbContext.Projects
+                .AsNoTracking()
+                .Include(p => p.User)
                 .Include(p => p.Tasks)
                 .FirstOrDefaultAsync(p => p.Id == id);
 
@@ -88,7 +92,7 @@ namespace Skopia.Application.Services
         }
 
         // Não há RN definida para atualização (update) de projetos
-        public Task<OperationResultModel<ProjectResponseDTO>> UpdateAsync(long id, ProjectRequestDTO request)
+        public Task<OperationResultModel<ProjectResponseDTO>> UpdateAsync(ProjectRequestDTO request)
         {
             throw new NotImplementedException();
         }

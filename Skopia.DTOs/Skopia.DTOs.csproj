@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Skopia.Domain\Skopia.Domain.csproj" />
+    <ProjectReference Include="..\Skopia.Infrastructure\Skopia.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

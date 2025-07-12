@@ -25,6 +25,8 @@ builder.Services.AddTransient<IBasicApiOperations<ProjectRequestDTO, ProjectRequ
 builder.Services.AddTransient<IBasicApiOperations<TaskRequestDTO, TaskUpdateRequestDTO, TaskResponseDTO, long>, TaskService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ITaskService, TaskService>();
+builder.Services.AddScoped<ITaskHistoryService, TaskHistoryService>();
 builder.Services.AddDbContext<SkopiaDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 

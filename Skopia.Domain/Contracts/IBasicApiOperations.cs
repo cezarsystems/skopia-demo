@@ -7,7 +7,7 @@ namespace Skopia.Domain.Contracts
         Task<IEnumerable<TResponseDTO>> GetAllAsync();
         Task<TResponseDTO> GetByIdAsync(TId id);
         Task<TResponseDTO> CreateAsync(TaskCreateDTO request);
-        Task<OperationResultModel<TResponseDTO>> UpdateAsync(TId id, TaskUpdateDTO request);
+        Task<OperationResultModel<TResponseDTO>> UpdateAsync(TaskUpdateDTO request);
         Task<OperationResultModel> DeleteAsync(TId id);
     }
 }

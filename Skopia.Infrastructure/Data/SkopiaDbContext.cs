@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Skopia.Domain.Models;
 
 namespace Skopia.Infrastructure.Data
@@ -39,18 +38,6 @@ namespace Skopia.Infrastructure.Data
                 .WithMany(u => u.Projects)
                 .HasForeignKey(p => p.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<TaskModel>()
-                .Property(t => t.Comments)
-                .HasConversion(
-                    v => string.Join("||", v),
-                    v => v.Split("||", StringSplitOptions.None)
-                )
-                .Metadata.SetValueComparer(new ValueComparer<string[]>(
-                    (c1, c2) => c1.SequenceEqual(c2),
-                    c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
-                    c => c.ToArray()
-                ));
 
             modelBuilder.Entity<TaskModel>()
                 .HasOne(t => t.User)

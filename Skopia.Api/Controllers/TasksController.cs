@@ -43,9 +43,9 @@ namespace Skopia.Api.Controllers
         }
 
         [HttpPut("update/{id}")]
-        public async Task<ActionResult<TaskResponseDTO>> Update(long id, [FromBody] TaskUpdateRequestDTO request)
+        public async Task<ActionResult<TaskResponseDTO>> Update([FromBody] TaskUpdateRequestDTO request)
         {
-            var result = await _service.UpdateAsync(id, request);
+            var result = await _service.UpdateAsync(request);
 
             if (!result.Success)
                 return BadRequest(new { error = result.ErrorMessage });

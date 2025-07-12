@@ -9,9 +9,17 @@ namespace Skopia.Application.Validators
     {
         private readonly IProjectService _projectService;
 
-        public TaskModelValidator(IProjectService projectService)
+        private readonly IUserService _userService;
+
+        private readonly ITaskService _taskService;
+
+        public TaskModelValidator(IProjectService projectService, IUserService userService, ITaskService taskService)
         {
             _projectService = projectService;
+
+            _userService = userService;
+
+            _taskService = taskService;
 
             RuleFor(x => x.ProjectId)
                 .NotEqual(0)
@@ -21,6 +29,18 @@ namespace Skopia.Application.Validators
                 .MustAsync(async (id, ct) => await _projectService.Exists(id))
                     .WithMessage("O projeto informado não existe.")
                 .When(x => x.ProjectId != 0);
+
+            RuleFor(x => x.ProjectId)
+                .MustAsync(async (id, ct) => !(await _taskService.TaskLimitExceeded(id)))
+                    .WithMessage("Não é possível incluir novas tarefas ao projeto informado, pois excederá 20 tarefas associadas.")
+                .When(x => x.ProjectId != 0);
+
+            RuleFor(x => x.UserId)
+                .Cascade(CascadeMode.Stop)
+                .NotEqual(0)
+                    .WithMessage("O identificador do usuário é inválido.")
+                .MustAsync(async (id, ct) => await _userService.Exists(id))
+                    .WithMessage("O usuário informado não existe.");
 
             RuleFor(x => x.Name)
                 .NotEmpty()

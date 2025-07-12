@@ -1,11 +1,7 @@
-﻿using Skopia.Domain.Contracts;
-using Skopia.DTOs.Models.Request;
-using Skopia.DTOs.Models.Response;
-
-namespace Skopia.Application.Contracts
+﻿namespace Skopia.Application.Contracts
 {
-    public interface ITaskService : IBasicApiOperations<ProjectRequestDTO, ProjectRequestDTO, ProjectResponseDTO, long>
+    public interface ITaskService
     {
-        // TODO: add validações de tarefas
+        Task<bool> TaskLimitExceeded(long id);
     }
 }

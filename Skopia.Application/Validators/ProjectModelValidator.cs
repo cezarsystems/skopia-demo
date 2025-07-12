@@ -13,13 +13,11 @@ namespace Skopia.Application.Validators
             _userService = userService;
 
             RuleFor(x => x.UserId)
+                .Cascade(CascadeMode.Stop)
                 .NotEqual(0)
-                    .WithMessage("O identificador do usuário é inválido.");
-
-            RuleFor(x => x.UserId)
+                    .WithMessage("O identificador do usuário é inválido.")
                 .MustAsync(async (id, ct) => await _userService.Exists(id))
-                    .WithMessage("O usuário informado não existe.")
-                .When(x => x.UserId != 0);
+                    .WithMessage("O usuário informado não existe.");
 
             RuleFor(x => x.Name)
                 .NotEmpty()

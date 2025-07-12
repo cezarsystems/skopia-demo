@@ -17,6 +17,7 @@ namespace Skopia.Api.Controllers
         public async Task<ActionResult<ProjectResponseDTO>> Create(ProjectRequestDTO request)
         {
             var result = await _service.CreateAsync(request);
+
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
 
@@ -35,9 +36,6 @@ namespace Skopia.Api.Controllers
         public async Task<ActionResult<ProjectResponseDTO>> GetAll()
         {
             var result = await _service.GetAllAsync();
-
-            if (result == null)
-                return NotFound();
 
             return Ok(result);
         }
