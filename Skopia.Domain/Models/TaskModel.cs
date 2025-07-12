@@ -12,5 +12,8 @@
         public long ProjectId { get; set; }
         public ProjectModel Project { get; set; }
         public DateTime LastModified { get; set; }
+        public long UserId { get; set; }
+        public UserModel User { get; set; }
+        public ICollection<TaskHistoryModel> Histories { get; set; } = [];
     }
 }

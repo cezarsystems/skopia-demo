@@ -10,6 +10,7 @@
         public DateTime? ExpirationData { get; set; }
         public DateTime LastModified { get; set; }
         public string[] Comments { get; set; }
+        public UserInfoResponseDTO Creator { get; set; }
         public ProjectBasicInfoResponseDTO Project { get; set; }
     }
 }

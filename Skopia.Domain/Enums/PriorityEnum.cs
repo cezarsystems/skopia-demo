@@ -5,10 +5,10 @@ namespace Skopia.Domain.Enums
     public enum PriorityEnum
     {
         [Description("Baixa")]
-        Low,
+        B,
         [Description("Média")]
-        Medium,
+        M,
         [Description("Alta")]
-        High
+        A
     }
 }

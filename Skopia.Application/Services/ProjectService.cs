@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Skopia.Application.Contracts;
 using Skopia.Domain.Contracts;
+using Skopia.Domain.Enums;
 using Skopia.Domain.Models;
 using Skopia.DTOs.Models.Request;
 using Skopia.DTOs.Models.Response;
@@ -33,14 +34,36 @@ namespace Skopia.Application.Services
             return _mapper.Map<ProjectResponseDTO>(newProject);
         }
 
-        public Task<OperationResultModel> DeleteAsync(long id)
+        public async Task<OperationResultModel> DeleteAsync(long id)
         {
-            throw new NotImplementedException();
+            var project = await _dbContext.Projects
+                .Include(p => p.Tasks)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (project == null)
+            {
+                return OperationResultModel.Fail("Projeto não encontrado. Favor confirmar seu identificador.");
+            }
+
+            var hasPendingTasks = project.Tasks.Any(t => t.Status == StatusEnum.P.ToString());
+
+            if (hasPendingTasks)
+            {
+                return OperationResultModel.Fail("Não é possível excluir o projeto, pois existem tarefas com status: Pendente");
+            }
+
+            _dbContext.Projects.Remove(project);
+
+            await _dbContext.SaveChangesAsync();
+
+            return OperationResultModel.Ok();
         }
+
 
         public async Task<IEnumerable<ProjectResponseDTO>> GetAllAsync()
         {
             var projects = await _dbContext.Projects
+                .AsNoTracking()
                 .Include(p => p.Tasks)
                 .ToListAsync();
 

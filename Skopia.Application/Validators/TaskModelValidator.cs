@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Skopia.Application.Contracts;
+using Skopia.Application.Converters;
 using Skopia.DTOs.Models.Request;
 
 namespace Skopia.Application.Validators
@@ -34,19 +35,34 @@ namespace Skopia.Application.Validators
             RuleFor(x => x.Priority)
                 .NotEmpty()
                     .WithMessage("O nível da prioridade da tarefa deve ser informado.")
-                .Must(priority => new[] { 'B', 'M', 'A' }.Contains(priority))
+                .Must(priority => new[] { 'B', 'M', 'A' }.Contains(char.ToUpper(priority)))
                     .WithMessage("Os níveis de prioridade válidos são B, M e A.");
 
             RuleFor(x => x.Status)
                 .NotEmpty()
                     .WithMessage("O status da tarefa deve ser informado.")
-                .Must(status => new[] { 'P', 'A', 'C' }.Contains(status))
+                .Must(status => new[] { 'P', 'A', 'C' }.Contains(char.ToUpper(status)))
                     .WithMessage("Os status válidos são P, A e C.");
 
-            RuleFor(x => x.ExpirationData)
-                .GreaterThanOrEqualTo(DateTime.Today)
-                .When(x => x.ExpirationData.HasValue)
-                    .WithMessage("A data de expiração da tarefa, se informada, não pode ser anterior à data atual.");
+            RuleFor(x => x.ExpirationDate)
+                .Custom((data, context) =>
+                {
+                    if (string.IsNullOrWhiteSpace(data))
+                        return;
+
+                    var parsed = DateConverter.Parse(data);
+
+                    if (parsed == null)
+                    {
+                        context.AddFailure("A data de expiração da tarefa é inválida. Informe uma data válida no formato AAAA-MM-DD.");
+                        return;
+                    }
+
+                    if (parsed.Value.Date < DateTime.Today)
+                    {
+                        context.AddFailure("A data de expiração da tarefa, se informada, não pode ser anterior à data atual.");
+                    }
+                });
 
             RuleFor(x => x.Comment)
                 .MaximumLength(1000)

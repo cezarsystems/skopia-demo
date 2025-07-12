@@ -26,14 +26,15 @@ namespace Skopia.Application.Services
             newTask.LastModified = DateTime.Now;
 
             _dbContext.Tasks.Add(newTask);
-
             await _dbContext.SaveChangesAsync();
 
-            await _dbContext.Entry(newTask)
-                .Reference(t => t.Project)
-                .LoadAsync();
+            var fullTask = await _dbContext.Tasks
+                .Include(t => t.User)
+                .Include(t => t.Project)
+                    .ThenInclude(p => p.User)
+                .FirstOrDefaultAsync(t => t.Id == newTask.Id);
 
-            return _mapper.Map<TaskResponseDTO>(newTask);
+            return _mapper.Map<TaskResponseDTO>(fullTask);
         }
 
         public Task<OperationResultModel> DeleteAsync(long id)
@@ -51,9 +52,16 @@ namespace Skopia.Application.Services
             return _mapper.Map<IEnumerable<TaskResponseDTO>>(taskList);
         }
 
-        public Task<TaskResponseDTO> GetByIdAsync(long id)
+        public async Task<TaskResponseDTO> GetByIdAsync(long id)
         {
-            throw new NotImplementedException();
+            var task = await _dbContext.Tasks
+                .Include(t => t.Project)
+                .FirstOrDefaultAsync(t => t.Id == id);
+
+            if (task == null)
+                return null;
+
+            return _mapper.Map<TaskResponseDTO>(task);
         }
 
         public Task<OperationResultModel<TaskResponseDTO>> UpdateAsync(long id, TaskUpdateRequestDTO request)

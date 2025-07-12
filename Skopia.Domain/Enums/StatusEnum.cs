@@ -5,10 +5,10 @@ namespace Skopia.Domain.Enums
     public enum StatusEnum
     {
         [Description("Pendente")]
-        Waiting,
+        P,
         [Description("Em andamento")]
-        Working,
+        A,
         [Description("Concluída")]
-        Done
+        C
     }
 }
