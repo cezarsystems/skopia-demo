@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Validators\Shared\NewFolder\**" />
+    <EmbeddedResource Remove="Validators\Shared\NewFolder\**" />
+    <None Remove="Validators\Shared\NewFolder\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Mappers\" />
   </ItemGroup>
 

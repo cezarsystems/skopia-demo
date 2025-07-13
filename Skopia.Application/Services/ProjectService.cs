@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Skopia.Application.Contracts;
-using Skopia.Domain.Contracts;
 using Skopia.Domain.Enums;
 using Skopia.Domain.Models;
 using Skopia.DTOs.Models.Request;
@@ -10,7 +9,11 @@ using Skopia.Infrastructure.Data;
 
 namespace Skopia.Application.Services
 {
-    public class ProjectService : IBasicApiOperations<ProjectRequestDTO, ProjectRequestDTO, ProjectResponseDTO, long>, IProjectService
+    public class ProjectService : IProjectService,
+        IPostOperations<ProjectRequestDTO, ProjectResponseDTO>,
+        IGetOperations<ProjectResponseDTO, long>,
+        IDeleteOperations<long>,
+        ICheckExistence<long>
     {
         private readonly SkopiaDbContext _dbContext;
         private readonly IMapper _mapper;
@@ -21,7 +24,7 @@ namespace Skopia.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<ProjectResponseDTO> CreateAsync(ProjectRequestDTO request)
+        public async Task<ProjectResponseDTO> PostAsync(ProjectRequestDTO request)
         {
             var newProject = _mapper.Map<ProjectModel>(request);
             newProject.LastModified = DateTime.Now;
@@ -89,12 +92,6 @@ namespace Skopia.Application.Services
         public async Task<bool> Exists(long id)
         {
             return await _dbContext.Projects.AnyAsync(p => p.Id == id);
-        }
-
-        // Não há RN definida para atualização (update) de projetos
-        public Task<OperationResultModel<ProjectResponseDTO>> UpdateAsync(ProjectRequestDTO request)
-        {
-            throw new NotImplementedException();
         }
     }
 }

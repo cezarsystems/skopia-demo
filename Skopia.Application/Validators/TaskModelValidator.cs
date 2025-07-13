@@ -8,17 +8,16 @@ namespace Skopia.Application.Validators
     public class TaskModelValidator : AbstractValidator<TaskRequestDTO>
     {
         private readonly IProjectService _projectService;
-
         private readonly IUserService _userService;
-
         private readonly ITaskService _taskService;
 
-        public TaskModelValidator(IProjectService projectService, IUserService userService, ITaskService taskService)
+        public TaskModelValidator(
+            IProjectService projectService,
+            IUserService userService,
+            ITaskService taskService)
         {
             _projectService = projectService;
-
             _userService = userService;
-
             _taskService = taskService;
 
             RuleFor(x => x.ProjectId)

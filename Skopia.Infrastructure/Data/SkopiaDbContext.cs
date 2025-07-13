@@ -8,69 +8,28 @@ namespace Skopia.Infrastructure.Data
         public SkopiaDbContext(DbContextOptions<SkopiaDbContext> options)
             : base(options) { }
 
+        public DbSet<UserModel> Users { get; set; }
         public DbSet<ProjectModel> Projects { get; set; }
         public DbSet<TaskModel> Tasks { get; set; }
-        public DbSet<UserModel> Users { get; set; }
         public DbSet<TaskHistoryModel> TaskHistories { get; set; }
+        public DbSet<TaskCommentModel> TaskComments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<UserModel>()
-                .ToTable("Users");
+            modelBuilder.Entity<UserModel>().ToTable("Users");
+            modelBuilder.Entity<ProjectModel>().ToTable("Projects");
+            modelBuilder.Entity<TaskModel>().ToTable("Tasks");
+            modelBuilder.Entity<TaskHistoryModel>().ToTable("TaskHistories");
+            modelBuilder.Entity<TaskCommentModel>().ToTable("TaskComments");
 
             modelBuilder.Entity<UserModel>().HasData(
-                new() { Id = 1, Name = "Administrador do JIRA", Role = "admin" },
-                new() { Id = 2, Name = "Agile Master", Role = "manager" },
-                new() { Id = 3, Name = "Product Owner", Role = "po" },
-                new() { Id = 4, Name = "Common User", Role = "user" }
+                new UserModel { Id = 1, Name = "Administrador do JIRA", Role = "admin" },
+                new UserModel { Id = 2, Name = "Agile Master", Role = "manager" },
+                new UserModel { Id = 3, Name = "Product Owner", Role = "po" },
+                new UserModel { Id = 4, Name = "Common User", Role = "user" }
             );
-
-            modelBuilder.Entity<ProjectModel>()
-                .HasMany(p => p.Tasks)
-                .WithOne(t => t.Project)
-                .HasForeignKey(t => t.ProjectId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<ProjectModel>()
-                .HasOne(p => p.User)
-                .WithMany(u => u.Projects)
-                .HasForeignKey(p => p.UserId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<TaskModel>()
-                .HasOne(t => t.User)
-                .WithMany(u => u.Tasks)
-                .HasForeignKey(t => t.UserId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<TaskHistoryModel>(entity =>
-            {
-                entity.ToTable("TaskHistories");
-
-                entity.HasKey(h => h.Id);
-
-                entity.Property(h => h.FieldChanged)
-                    .IsRequired()
-                    .HasMaxLength(100);
-
-                entity.Property(h => h.OldValue)
-                    .HasMaxLength(500);
-
-                entity.Property(h => h.NewValue)
-                    .HasMaxLength(500);
-
-                entity.HasOne(h => h.Task)
-                    .WithMany(t => t.Histories)
-                    .HasForeignKey(h => h.TaskId)
-                    .OnDelete(DeleteBehavior.Cascade);
-
-                entity.HasOne(h => h.User)
-                    .WithMany(u => u.Histories)
-                    .HasForeignKey(h => h.UserId)
-                    .OnDelete(DeleteBehavior.Restrict);
-            });
         }
     }
 }

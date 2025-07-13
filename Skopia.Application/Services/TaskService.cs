@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Skopia.Application.Contracts;
-using Skopia.Application.Helpers;
-using Skopia.Domain.Contracts;
 using Skopia.Domain.Models;
 using Skopia.DTOs.Models.Request;
 using Skopia.DTOs.Models.Response;
@@ -10,24 +8,26 @@ using Skopia.Infrastructure.Data;
 
 namespace Skopia.Application.Services
 {
-    public class TaskService : IBasicApiOperations<TaskRequestDTO, TaskUpdateRequestDTO, TaskResponseDTO, long>, ITaskService
+    public class TaskService : ITaskService
     {
         private readonly SkopiaDbContext _dbContext;
         private readonly IMapper _mapper;
         private readonly ITaskHistoryService _taskHistoryService;
+        private readonly ITaskCommentService _taskCommentService;
 
-        public TaskService(SkopiaDbContext dbContext, IMapper mapper, ITaskHistoryService taskHistoryService)
+        public TaskService(SkopiaDbContext dbContext, IMapper mapper, ITaskHistoryService taskHistoryService, ITaskCommentService taskCommentService)
         {
             _dbContext = dbContext;
             _mapper = mapper;
             _taskHistoryService = taskHistoryService;
+            _taskCommentService = taskCommentService;
         }
 
         public async Task<TaskResponseDTO> CreateAsync(TaskRequestDTO request)
         {
             var user = await _dbContext.Users.FindAsync(request.UserId);
-
-            request.Comment = CommentHelper.AddComment(request.Comment, user.Name);
+            if (user == null)
+                throw new InvalidOperationException("Usuário não encontrado.");
 
             var newTask = _mapper.Map<TaskModel>(request);
             newTask.LastModified = DateTime.Now;
@@ -35,10 +35,16 @@ namespace Skopia.Application.Services
             _dbContext.Tasks.Add(newTask);
             await _dbContext.SaveChangesAsync();
 
+            if (!string.IsNullOrWhiteSpace(request.Comment))
+            {
+                await _taskCommentService.AddAsync(newTask.Id, request.UserId, request.Comment);
+            }
+
             var fullTask = await _dbContext.Tasks
                 .Include(t => t.User)
                 .Include(t => t.Project)
                     .ThenInclude(p => p.User)
+                .Include(t => t.Comments)
                 .FirstOrDefaultAsync(t => t.Id == newTask.Id);
 
             return _mapper.Map<TaskResponseDTO>(fullTask);
@@ -46,13 +52,9 @@ namespace Skopia.Application.Services
 
         public async Task<OperationResultModel> DeleteAsync(long id)
         {
-            var task = await _dbContext.Tasks
-                .FirstOrDefaultAsync(p => p.Id == id);
-
+            var task = await _dbContext.Tasks.FirstOrDefaultAsync(t => t.Id == id);
             if (task == null)
-            {
-                return OperationResultModel.Fail("Tarefa não encontrado. Favor confirmar seu identificador.");
-            }
+                return OperationResultModel.Fail("Tarefa não encontrada. Favor confirmar seu identificador.");
 
             _dbContext.Tasks.Remove(task);
             await _dbContext.SaveChangesAsync();
@@ -67,6 +69,7 @@ namespace Skopia.Application.Services
                 .Include(t => t.User)
                 .Include(t => t.Project)
                     .ThenInclude(p => p.User)
+                .Include(t => t.Comments)
                 .ToListAsync();
 
             return _mapper.Map<IEnumerable<TaskResponseDTO>>(tasks);
@@ -79,12 +82,10 @@ namespace Skopia.Application.Services
                 .Include(t => t.User)
                 .Include(t => t.Project)
                     .ThenInclude(p => p.User)
+                .Include(t => t.Comments)
                 .FirstOrDefaultAsync(t => t.Id == id);
 
-            if (task == null)
-                return null;
-
-            return _mapper.Map<TaskResponseDTO>(task);
+            return task == null ? null : _mapper.Map<TaskResponseDTO>(task);
         }
 
         public async Task<bool> TaskLimitExceeded(long id)
@@ -98,56 +99,59 @@ namespace Skopia.Application.Services
             if (task == null)
                 return OperationResultModel<TaskResponseDTO>.Fail("Tarefa não encontrada.");
 
-            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == request.UserId);
+            var user = await _dbContext.Users.FindAsync(request.UserId);
             if (user == null)
                 return OperationResultModel<TaskResponseDTO>.Fail("Usuário não encontrado.");
 
-            var histories = new List<TaskHistoryEntryModel>();
+            var histories = new List<TaskHistoryModel>();
 
             if (task.Status != request.Status.ToString())
             {
-                histories.Add(new TaskHistoryEntryModel
+                histories.Add(new TaskHistoryModel
                 {
                     FieldChanged = "Status",
                     OldValue = task.Status,
                     NewValue = request.Status.ToString(),
                     TaskId = task.Id,
-                    UserId = user.Id
+                    UserId = user.Id,
+                    ModifiedAt = DateTime.Now
                 });
+
                 task.Status = request.Status.ToString();
             }
 
-            if (task.ExpirationData != request.ExpirationDate)
+            if (task.ExpirationDate != request.ExpirationDate)
             {
-                histories.Add(new TaskHistoryEntryModel
+                histories.Add(new TaskHistoryModel
                 {
-                    FieldChanged = "ExpirationData",
-                    OldValue = task.ExpirationData?.ToString("yyyy-MM-dd"),
+                    FieldChanged = "ExpirationDate",
+                    OldValue = task.ExpirationDate?.ToString("yyyy-MM-dd"),
                     NewValue = request.ExpirationDate?.ToString("yyyy-MM-dd"),
                     TaskId = task.Id,
-                    UserId = user.Id
+                    UserId = user.Id,
+                    ModifiedAt = DateTime.Now
                 });
-                task.ExpirationData = request.ExpirationDate;
+
+                task.ExpirationDate = request.ExpirationDate;
             }
+
+            task.LastModified = DateTime.Now;
+            await _dbContext.SaveChangesAsync();
 
             if (!string.IsNullOrWhiteSpace(request.Comment))
             {
-                task.Comments = CommentHelper.AppendComment("", request.Comment, user.Name);
+                await _taskCommentService.AddAsync(task.Id, user.Id, request.Comment);
 
-                histories.Add(new TaskHistoryEntryModel
+                histories.Add(new TaskHistoryModel
                 {
                     FieldChanged = "Comment",
                     OldValue = "",
                     NewValue = request.Comment,
                     TaskId = task.Id,
-                    UserId = user.Id
+                    UserId = user.Id,
+                    ModifiedAt = DateTime.Now
                 });
             }
-
-            task.LastModified = DateTime.Now;
-
-            await _dbContext.SaveChangesAsync();
-
 
             if (histories.Any())
                 await _taskHistoryService.AddRangeAsync(histories);

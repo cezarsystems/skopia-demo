@@ -18,9 +18,13 @@ namespace Skopia.Application.Mappers
                     src => ToolsServiceExtension.GetEnumDescription<PriorityEnum>(src.Priority)))
                 .ForMember(dest => dest.Creator, opt => opt.MapFrom(src => src.User))
                 .ForMember(dest => dest.Comments, opt => opt.MapFrom(
-                    src => string.IsNullOrEmpty(src.Comments)
-                    ? Array.Empty<string>()
-                    : src.Comments.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)));
+                    src => src.Comments.Select(c => c.Content).ToArray()));
+
+            CreateMap<TaskRequestDTO, TaskModel>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => char.ToUpperInvariant(src.Status)))
+                .ForMember(dest => dest.Priority, opt => opt.MapFrom(src => char.ToUpperInvariant(src.Priority)))
+                .ForMember(dest => dest.ExpirationDate, opt => opt.MapFrom(
+                    src => DateConverter.Parse(src.ExpirationDate)));
 
             CreateMap<ProjectModel, ProjectResponseDTO>()
                 .ForMember(dest => dest.Creator, opt => opt.MapFrom(src => src.User))
@@ -31,17 +35,9 @@ namespace Skopia.Application.Mappers
 
             CreateMap<ProjectRequestDTO, ProjectModel>();
 
-            CreateMap<TaskRequestDTO, TaskModel>()
-                .ForMember(dest => dest.Comments, opt => opt.MapFrom(src => new[] { src.Comment }))
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => char.ToUpperInvariant(src.Status)))
-                .ForMember(dest => dest.Priority, opt => opt.MapFrom(src => char.ToUpperInvariant(src.Priority)))
-                .ForMember(dest => dest.ExpirationData, opt => opt.MapFrom(
-                    src => DateConverter.Parse(src.ExpirationDate)));
-
             CreateMap<UserModel, UserInfoResponseDTO>();
 
-            CreateMap<TaskHistoryEntryModel, TaskHistoryModel>()
-                .ForMember(dest => dest.ModifiedAt, opt => opt.MapFrom(src => DateTime.Now));
+            CreateMap<TaskHistoryModel, TaskHistoryModel>();
         }
     }
 }

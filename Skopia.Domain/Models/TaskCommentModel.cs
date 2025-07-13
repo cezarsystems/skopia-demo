@@ -1,6 +1,6 @@
 ﻿namespace Skopia.Domain.Models
 {
-    public class TaskHistoryModel
+    public class TaskCommentModel
     {
         public long Id { get; set; }
 
@@ -10,10 +10,8 @@
         public long UserId { get; set; }
         public UserModel User { get; set; }
 
-        public string FieldChanged { get; set; }
-        public string OldValue { get; set; }
-        public string NewValue { get; set; }
+        public string Content { get; set; }
 
-        public DateTime ModifiedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreationDate { get; set; } = DateTime.UtcNow;
     }
 }

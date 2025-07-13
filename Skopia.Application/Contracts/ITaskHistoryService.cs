@@ -4,6 +4,6 @@ namespace Skopia.Application.Contracts
 {
     public interface ITaskHistoryService
     {
-        Task AddRangeAsync(IEnumerable<TaskHistoryEntryModel> entries);
+        Task AddRangeAsync(IEnumerable<TaskHistoryModel> entries);
     }
 }

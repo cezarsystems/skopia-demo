@@ -17,7 +17,7 @@ namespace Skopia.Application.Services
             _mapper = mapper;
         }
 
-        public async Task AddRangeAsync(IEnumerable<TaskHistoryEntryModel> entries)
+        public async Task AddRangeAsync(IEnumerable<TaskHistoryModel> entries)
         {
             var histories = _mapper.Map<IEnumerable<TaskHistoryModel>>(entries);
 
