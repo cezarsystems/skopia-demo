@@ -1,7 +1,14 @@
-﻿namespace Skopia.Application.Contracts
+﻿using Skopia.DTOs.Models.Request;
+using Skopia.DTOs.Models.Response;
+
+namespace Skopia.Application.Contracts;
+
+public interface ITaskService :
+    ICheckExistence<long>,
+    IDeleteOperations<long>,
+    IGetOperations<TaskResponseDTO, long>,
+    IPostOperations<TaskRequestDTO, TaskResponseDTO>,
+    IUpdateOperations<TaskUpdateRequestDTO, TaskResponseDTO>
 {
-    public interface ITaskService
-    {
-        Task<bool> TaskLimitExceeded(long id);
-    }
+    Task<bool> LimitExceeded(long id);
 }

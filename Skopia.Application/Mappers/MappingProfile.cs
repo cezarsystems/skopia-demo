@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Skopia.Application.Converters;
-using Skopia.Domain.Enums;
 using Skopia.Domain.Models;
 using Skopia.DTOs.Models.Request;
 using Skopia.DTOs.Models.Response;
@@ -18,11 +17,14 @@ namespace Skopia.Application.Mappers
                     src => ToolsServiceExtension.GetEnumDescription<PriorityEnum>(src.Priority)))
                 .ForMember(dest => dest.Creator, opt => opt.MapFrom(src => src.User))
                 .ForMember(dest => dest.Comments, opt => opt.MapFrom(
-                    src => src.Comments.Select(c => c.Content).ToArray()));
+                    src => src.Comments
+                        .OrderByDescending(c => c.CreationDate)
+                        .Select(c => c.Content)
+                        .ToArray()));
 
             CreateMap<TaskRequestDTO, TaskModel>()
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => char.ToUpperInvariant(src.Status)))
-                .ForMember(dest => dest.Priority, opt => opt.MapFrom(src => char.ToUpperInvariant(src.Priority)))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToUpper()))
+                .ForMember(dest => dest.Priority, opt => opt.MapFrom(src => src.Priority.ToUpper()))
                 .ForMember(dest => dest.ExpirationDate, opt => opt.MapFrom(
                     src => DateConverter.Parse(src.ExpirationDate)));
 

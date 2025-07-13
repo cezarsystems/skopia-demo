@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Skopia.Application.Contracts;
-using Skopia.Domain.Enums;
 using Skopia.Domain.Models;
 using Skopia.DTOs.Models.Request;
 using Skopia.DTOs.Models.Response;
@@ -9,11 +8,7 @@ using Skopia.Infrastructure.Data;
 
 namespace Skopia.Application.Services
 {
-    public class ProjectService : IProjectService,
-        IPostOperations<ProjectRequestDTO, ProjectResponseDTO>,
-        IGetOperations<ProjectResponseDTO, long>,
-        IDeleteOperations<long>,
-        ICheckExistence<long>
+    public class ProjectService : IProjectService
     {
         private readonly SkopiaDbContext _dbContext;
         private readonly IMapper _mapper;
@@ -89,9 +84,6 @@ namespace Skopia.Application.Services
             return _mapper.Map<ProjectResponseDTO>(project);
         }
 
-        public async Task<bool> Exists(long id)
-        {
-            return await _dbContext.Projects.AnyAsync(p => p.Id == id);
-        }
+        public async Task<bool> Exists(long id) => await _dbContext.Projects.AnyAsync(p => p.Id == id);
     }
 }

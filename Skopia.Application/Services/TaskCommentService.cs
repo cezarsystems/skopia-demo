@@ -1,17 +1,30 @@
 ﻿using Skopia.Application.Contracts;
+using Skopia.Domain.Models;
+using Skopia.Infrastructure.Data;
 
 namespace Skopia.Application.Services
 {
     public class TaskCommentService : ITaskCommentService
     {
-        public TaskCommentService(/* dependências */)
-        {
+        private readonly SkopiaDbContext _dbContext;
 
+        public TaskCommentService(SkopiaDbContext dbContext)
+        {
+            _dbContext = dbContext;
         }
 
-        public Task AddAsync(long taskId, long userId, string content)
+        public async Task AddAsync(long taskId, long userId, string content)
         {
-            throw new NotImplementedException();
+            var comment = new TaskCommentModel
+            {
+                TaskId = taskId,
+                UserId = userId,
+                Content = content,
+                CreationDate = DateTime.Now
+            };
+
+            _dbContext.TaskComments.Add(comment);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

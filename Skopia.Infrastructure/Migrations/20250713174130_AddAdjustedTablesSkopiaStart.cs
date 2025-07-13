@@ -118,8 +118,8 @@ namespace Skopia.Infrastructure.Migrations
                     TaskId = table.Column<long>(type: "INTEGER", nullable: false),
                     UserId = table.Column<long>(type: "INTEGER", nullable: false),
                     FieldChanged = table.Column<string>(type: "TEXT", nullable: false),
-                    OldValue = table.Column<string>(type: "TEXT", nullable: false),
-                    NewValue = table.Column<string>(type: "TEXT", nullable: false),
+                    OldValue = table.Column<string>(type: "TEXT", nullable: true),
+                    NewValue = table.Column<string>(type: "TEXT", nullable: true),
                     ModifiedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>

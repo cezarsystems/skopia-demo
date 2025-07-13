@@ -9,35 +9,21 @@ namespace Skopia.Api.Controllers
     [Route("api/v1.0/skopia/projects/tasks")]
     public class TasksController : ControllerBase
     {
-        private readonly IGetOperations<TaskResponseDTO, long> _get;
-        private readonly IPostOperations<TaskRequestDTO, TaskResponseDTO> _post;
-        private readonly IUpdateOperations<TaskUpdateRequestDTO, TaskResponseDTO> _update;
-        private readonly IDeleteOperations<long> _delete;
+        private readonly ITaskService _service;
 
-
-        public TasksController(
-            IGetOperations<TaskResponseDTO, long> get,
-            IPostOperations<TaskRequestDTO, TaskResponseDTO> post,
-            IUpdateOperations<TaskUpdateRequestDTO, TaskResponseDTO> update,
-            IDeleteOperations<long> delete)
-        {
-            _get = get;
-            _post = post;
-            _update = update;
-            _delete = delete;
-        }
+        public TasksController(ITaskService service) => _service = service;
 
         [HttpPost("post")]
         public async Task<ActionResult<TaskResponseDTO>> Post(TaskRequestDTO request)
         {
-            var result = await _post.PostAsync(request);
+            var result = await _service.PostAsync(request);
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
 
         [HttpGet("get/{id}")]
         public async Task<ActionResult<TaskResponseDTO>> GetById(long id)
         {
-            var result = await _get.GetByIdAsync(id);
+            var result = await _service.GetByIdAsync(id);
 
             if (result == null)
                 return NotFound();
@@ -48,7 +34,7 @@ namespace Skopia.Api.Controllers
         [HttpGet("get-all")]
         public async Task<ActionResult<TaskResponseDTO>> GetAll()
         {
-            var result = await _get.GetAllAsync();
+            var result = await _service.GetAllAsync();
 
             if (result == null)
                 return NotFound();
@@ -56,10 +42,10 @@ namespace Skopia.Api.Controllers
             return Ok(result);
         }
 
-        [HttpPut("update/{id}")]
-        public async Task<ActionResult<TaskResponseDTO>> Update([FromBody] TaskUpdateRequestDTO request)
+        [HttpPut("update")]
+        public async Task<ActionResult<TaskResponseDTO>> Update(TaskUpdateRequestDTO request)
         {
-            var result = await _update.UpdateAsync(request);
+            var result = await _service.UpdateAsync(request);
 
             if (!result.Success)
                 return BadRequest(new { error = result.ErrorMessage });
@@ -73,7 +59,7 @@ namespace Skopia.Api.Controllers
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(long id)
         {
-            var result = await _delete.DeleteAsync(id);
+            var result = await _service.DeleteAsync(id);
 
             if (!result.Success)
                 return BadRequest(new { error = result.ErrorMessage });

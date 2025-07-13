@@ -86,11 +86,9 @@ namespace Skopia.Infrastructure.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("NewValue")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("OldValue")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<long>("TaskId")

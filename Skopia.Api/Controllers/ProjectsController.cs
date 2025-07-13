@@ -9,24 +9,14 @@ namespace Skopia.Api.Controllers
     [Route("api/v1.0/skopia/projects")]
     public class ProjectsController : ControllerBase
     {
-        private readonly IGetOperations<ProjectResponseDTO, long> _get;
-        private readonly IPostOperations<ProjectRequestDTO, ProjectResponseDTO> _post;
-        private readonly IDeleteOperations<long> _delete;
+        private readonly IProjectService _service;
 
-        public ProjectsController(
-            IGetOperations<ProjectResponseDTO, long> get,
-            IPostOperations<ProjectRequestDTO, ProjectResponseDTO> post,
-            IDeleteOperations<long> delete)
-        {
-            _get = get;
-            _post = post;
-            _delete = delete;
-        }
+        public ProjectsController(IProjectService service) => _service = service;
 
         [HttpPost("post")]
         public async Task<ActionResult<ProjectResponseDTO>> Post(ProjectRequestDTO request)
         {
-            var result = await _post.PostAsync(request);
+            var result = await _service.PostAsync(request);
 
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
@@ -34,7 +24,7 @@ namespace Skopia.Api.Controllers
         [HttpGet("get/{id}")]
         public async Task<ActionResult<ProjectResponseDTO>> GetById(long id)
         {
-            var result = await _get.GetByIdAsync(id);
+            var result = await _service.GetByIdAsync(id);
 
             if (result == null)
                 return NotFound();
@@ -45,7 +35,7 @@ namespace Skopia.Api.Controllers
         [HttpGet("get-all")]
         public async Task<ActionResult<ProjectResponseDTO>> GetAll()
         {
-            var result = await _get.GetAllAsync();
+            var result = await _service.GetAllAsync();
 
             return Ok(result);
         }
@@ -53,7 +43,7 @@ namespace Skopia.Api.Controllers
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(long id)
         {
-            var result = await _delete.DeleteAsync(id);
+            var result = await _service.DeleteAsync(id);
 
             if (!result.Success)
                 return BadRequest(new { error = result.ErrorMessage });

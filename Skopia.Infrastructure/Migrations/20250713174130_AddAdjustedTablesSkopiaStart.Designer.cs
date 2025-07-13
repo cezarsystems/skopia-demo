@@ -11,7 +11,7 @@ using Skopia.Infrastructure.Data;
 namespace Skopia.Infrastructure.Migrations
 {
     [DbContext(typeof(SkopiaDbContext))]
-    [Migration("20250713033030_AddAdjustedTablesSkopiaStart")]
+    [Migration("20250713174130_AddAdjustedTablesSkopiaStart")]
     partial class AddAdjustedTablesSkopiaStart
     {
         /// <inheritdoc />
@@ -89,11 +89,9 @@ namespace Skopia.Infrastructure.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("NewValue")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("OldValue")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<long>("TaskId")

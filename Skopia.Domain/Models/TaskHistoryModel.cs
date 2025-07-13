@@ -11,8 +11,8 @@
         public UserModel User { get; set; }
 
         public string FieldChanged { get; set; }
-        public string OldValue { get; set; }
-        public string NewValue { get; set; }
+        public string? OldValue { get; set; }
+        public string? NewValue { get; set; }
 
         public DateTime ModifiedAt { get; set; } = DateTime.UtcNow;
     }
