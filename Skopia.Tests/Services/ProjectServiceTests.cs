@@ -19,7 +19,7 @@ namespace Skopia.Tests.Services
             _mapper = config.CreateMapper();
 
             var options = new DbContextOptionsBuilder<SkopiaDbContext>()
-                .UseInMemoryDatabase(databaseName: "SkopiaTestDb")
+                .UseInMemoryDatabase(databaseName: "SkopiaTestDb_" + Guid.NewGuid())
                 .Options;
 
             _dbContext = new SkopiaDbContext(options);
@@ -30,7 +30,7 @@ namespace Skopia.Tests.Services
             _service = new ProjectService(_dbContext, _mapper);
         }
 
-        [Fact]
+        [Fact(DisplayName = "PostAsync cria um novo projeto e traz os dados com sucesso")]
         public async Task PostAsync_ShouldCreateNewProject()
         {
             // Arrange
@@ -53,7 +53,7 @@ namespace Skopia.Tests.Services
             Assert.NotNull(projectInDb);
         }
 
-        [Fact]
+        [Fact(DisplayName = "GetByIdAsync obtêm os dados do projeto pelo identificador e retorna sucesso")]
         public async Task GetByIdAsync_ShouldReturnProject_WhenExists()
         {
             // Arrange
@@ -69,7 +69,7 @@ namespace Skopia.Tests.Services
             Assert.Equal(project.Name, result.Name);
         }
 
-        [Fact]
+        [Fact(DisplayName = "GetAllAsync retorna os dados de todos os projetos com sucesso")]
         public async Task GetAllAsync_ShouldReturnAllProjects()
         {
             // Arrange
@@ -87,7 +87,7 @@ namespace Skopia.Tests.Services
             Assert.Equal(2, result.Count());
         }
 
-        [Fact]
+        [Fact(DisplayName = "DeleteAsync remove um projeto com sucesso se não houver tarefas com status 'Pendente'")]
         public async Task DeleteAsync_ShouldRemoveProject_WhenNoPendingTasks()
         {
             // Arrange
