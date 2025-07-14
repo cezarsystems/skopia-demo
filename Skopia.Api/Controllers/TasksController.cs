@@ -5,14 +5,26 @@ using Skopia.DTOs.Models.Response;
 
 namespace Skopia.Api.Controllers
 {
+    /// <summary>
+    /// Responsável pela gestão de tarefas associadas a projetos.
+    /// </summary>
     [ApiController]
     [Route("api/v1.0/skopia/projects/tasks")]
+    [Tags("Tarefas")]
     public class TasksController : ControllerBase
     {
         private readonly ITaskService _service;
 
         public TasksController(ITaskService service) => _service = service;
 
+        /// <summary>
+        /// Cria uma nova tarefa vinculada a um projeto.
+        /// </summary>
+        /// <remarks>
+        /// A tarefa será associada ao usuário e projeto informados na requisição.
+        /// </remarks>
+        /// <param name="request">Dados da tarefa a ser criada.</param>
+        /// <returns>Dados da tarefa criada.</returns>
         [HttpPost("post")]
         public async Task<ActionResult<TaskResponseDTO>> Post(TaskRequestDTO request)
         {
@@ -20,6 +32,11 @@ namespace Skopia.Api.Controllers
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
 
+        /// <summary>
+        /// Obtém os detalhes de uma tarefa específica.
+        /// </summary>
+        /// <param name="id">Identificador da tarefa.</param>
+        /// <returns>Informações completas da tarefa.</returns>
         [HttpGet("get/{id}")]
         public async Task<ActionResult<TaskResponseDTO>> GetById(long id)
         {
@@ -31,6 +48,10 @@ namespace Skopia.Api.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Lista todas as tarefas existentes no sistema.
+        /// </summary>
+        /// <returns>Lista de todas as tarefas cadastradas.</returns>
         [HttpGet("get-all")]
         public async Task<ActionResult<TaskResponseDTO>> GetAll()
         {
@@ -42,6 +63,14 @@ namespace Skopia.Api.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Atualiza os dados de uma tarefa existente.
+        /// </summary>
+        /// <remarks>
+        /// Permite modificar o status, data de expiração ou adicionar comentários. Também registra histórico das alterações.
+        /// </remarks>
+        /// <param name="request">Dados atualizados da tarefa.</param>
+        /// <returns>Dados da tarefa após a atualização.</returns>
         [HttpPut("update")]
         public async Task<ActionResult<TaskResponseDTO>> Update(TaskUpdateRequestDTO request)
         {
@@ -56,6 +85,11 @@ namespace Skopia.Api.Controllers
             return Ok(result.Data);
         }
 
+        /// <summary>
+        /// Exclui uma tarefa existente.
+        /// </summary>
+        /// <param name="id">Identificador da tarefa a ser removida.</param>
+        /// <returns>Resultado da operação.</returns>
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(long id)
         {
