@@ -5,6 +5,8 @@
 
 # Skopia
 Skopia.Api/DataBase
+Skopia.Tests/coveragereport
+Skopia.Tests/TestResults
 
 # User-specific files
 *.rsuser

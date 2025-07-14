@@ -3,15 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.34929.205
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Skopia.Api", "Skopia.Api\Skopia.Api.csproj", "{525782CD-55DA-4C1B-BD4C-4FB957D77E9C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Skopia.Api", "Skopia.Api\Skopia.Api.csproj", "{525782CD-55DA-4C1B-BD4C-4FB957D77E9C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Skopia.Domain", "Skopia.Domain\Skopia.Domain.csproj", "{672753ED-7F79-4FBF-8582-39CB22ED56B1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Skopia.Domain", "Skopia.Domain\Skopia.Domain.csproj", "{672753ED-7F79-4FBF-8582-39CB22ED56B1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Skopia.Application", "Skopia.Application\Skopia.Application.csproj", "{2D276AA9-9CAC-40D6-ACB0-B78BD4BD3BA1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Skopia.Application", "Skopia.Application\Skopia.Application.csproj", "{2D276AA9-9CAC-40D6-ACB0-B78BD4BD3BA1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Skopia.Infrastructure", "Skopia.Infrastructure\Skopia.Infrastructure.csproj", "{3760591C-AB90-4D90-A349-52E69C5D8408}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Skopia.Infrastructure", "Skopia.Infrastructure\Skopia.Infrastructure.csproj", "{3760591C-AB90-4D90-A349-52E69C5D8408}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Skopia.DTOs", "Skopia.DTOs\Skopia.DTOs.csproj", "{049CFF34-7592-4D72-B153-A4EAD6D4E7E4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Skopia.DTOs", "Skopia.DTOs\Skopia.DTOs.csproj", "{049CFF34-7592-4D72-B153-A4EAD6D4E7E4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Skopia.Tests", "Skopia.Tests\Skopia.Tests.csproj", "{8B9B4E81-8EF8-4D66-9F38-44D4D570D096}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{049CFF34-7592-4D72-B153-A4EAD6D4E7E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{049CFF34-7592-4D72-B153-A4EAD6D4E7E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{049CFF34-7592-4D72-B153-A4EAD6D4E7E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B9B4E81-8EF8-4D66-9F38-44D4D570D096}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B9B4E81-8EF8-4D66-9F38-44D4D570D096}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B9B4E81-8EF8-4D66-9F38-44D4D570D096}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B9B4E81-8EF8-4D66-9F38-44D4D570D096}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
