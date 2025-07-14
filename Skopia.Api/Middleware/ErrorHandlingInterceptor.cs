@@ -24,7 +24,7 @@
                 context.Response.StatusCode = 500;
                 context.Response.ContentType = "application/json";
 
-                var response = new { message = "Ocorreu um erro interno no servidor." };
+                var response = new { message = "Ocorreu um erro interno no servidor. Entre em contato com a equipe de suporte Skopia" };
 
                 await context.Response.WriteAsJsonAsync(response);
             }

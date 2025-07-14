@@ -25,10 +25,11 @@ namespace Skopia.Infrastructure.Data
             modelBuilder.Entity<TaskCommentModel>().ToTable("TaskComments");
 
             modelBuilder.Entity<UserModel>().HasData(
-                new UserModel { Id = 1, Name = "Administrador do JIRA", Role = "admin" },
-                new UserModel { Id = 2, Name = "Agile Master", Role = "manager" },
-                new UserModel { Id = 3, Name = "Product Owner", Role = "po" },
-                new UserModel { Id = 4, Name = "Common User", Role = "user" }
+                new UserModel { Id = 1, Name = "Administrador do JIRA", Role = "adm" },
+                new UserModel { Id = 2, Name = "Project Manager", Role = "mgr" },
+                new UserModel { Id = 3, Name = "Agile Master", Role = "am" },
+                new UserModel { Id = 4, Name = "Product Owner", Role = "po" },
+                new UserModel { Id = 5, Name = "Common User", Role = "usr" }
             );
         }
     }

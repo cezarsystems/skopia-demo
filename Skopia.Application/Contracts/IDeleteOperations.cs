@@ -1,9 +1,9 @@
-﻿using Skopia.Domain.Models;
+﻿using Skopia.DTOs.Models.Response;
 
 namespace Skopia.Application.Contracts
 {
     public interface IDeleteOperations<TId>
     {
-        Task<OperationResultModel> DeleteAsync(TId id);
+        Task<OperationResponseDTO> DeleteAsync(TId id);
     }
 }

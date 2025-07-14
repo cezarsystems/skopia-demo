@@ -1,9 +1,9 @@
-﻿using Skopia.Domain.Models;
+﻿using Skopia.DTOs.Models.Response;
 
 namespace Skopia.Application.Contracts
 {
     public interface IUpdateOperations<TUpdateRequestDTO, TResponseDTO>
     {
-        Task<OperationResultModel<TResponseDTO>> UpdateAsync(TUpdateRequestDTO request);
+        Task<OperationResponseDTO<TResponseDTO>> UpdateAsync(TUpdateRequestDTO request);
     }
 }

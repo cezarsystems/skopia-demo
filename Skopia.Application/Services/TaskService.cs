@@ -27,16 +27,16 @@ namespace Skopia.Application.Services
             _taskCommentService = taskCommentService;
         }
 
-        public async Task<OperationResultModel> DeleteAsync(long id)
+        public async Task<OperationResponseDTO> DeleteAsync(long id)
         {
             var task = await _dbContext.Tasks.FirstOrDefaultAsync(t => t.Id == id);
             if (task == null)
-                return OperationResultModel.Fail("Tarefa não encontrada. Favor confirmar seu identificador.");
+                return OperationResponseDTO.Fail("Tarefa não encontrada. Favor confirmar seu identificador.");
 
             _dbContext.Tasks.Remove(task);
             await _dbContext.SaveChangesAsync();
 
-            return OperationResultModel.Ok();
+            return OperationResponseDTO.Ok();
         }
 
         public async Task<bool> Exists(long id) => await _dbContext.Tasks.AnyAsync(p => p.Id == id);
@@ -76,6 +76,7 @@ namespace Skopia.Application.Services
         {
             var newTask = _mapper.Map<TaskModel>(request);
             newTask.LastModified = DateTime.Now;
+            newTask.CreatedAt = DateTime.Now;
 
             _dbContext.Tasks.Add(newTask);
             await _dbContext.SaveChangesAsync();
@@ -95,7 +96,7 @@ namespace Skopia.Application.Services
             return _mapper.Map<TaskResponseDTO>(fullTask);
         }
 
-        public async Task<OperationResultModel<TaskResponseDTO>> UpdateAsync(TaskUpdateRequestDTO request)
+        public async Task<OperationResponseDTO<TaskResponseDTO>> UpdateAsync(TaskUpdateRequestDTO request)
         {
             var task = await _dbContext.Tasks.FirstAsync(t => t.Id == request.TaskId);
             var user = await _dbContext.Users.FirstAsync(u => u.Id == request.UserId);
@@ -118,6 +119,16 @@ namespace Skopia.Application.Services
                     UserId = user.Id,
                     ModifiedAt = DateTime.Now
                 });
+
+                if (task.Status != request.Status && request.Status == StatusEnum.C.ToString())
+                {
+                    task.CompletedAt = DateTime.UtcNow;
+                }
+                else if (task.Status != request.Status && request.Status != StatusEnum.C.ToString())
+                {
+                    // Como não foi definida uma RN que bloqueia a exclusão de uma tarefa concluída, reseto a data de conclusão.
+                    task.CompletedAt = null;
+                }
 
                 task.Status = newStatus;
             }
@@ -170,7 +181,7 @@ namespace Skopia.Application.Services
 
             var response = _mapper.Map<TaskResponseDTO>(updatedTask);
 
-            return OperationResultModel<TaskResponseDTO>.Ok(response);
+            return OperationResponseDTO<TaskResponseDTO>.Ok(response);
         }
     }
 }

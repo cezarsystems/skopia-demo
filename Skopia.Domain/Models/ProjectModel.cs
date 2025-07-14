@@ -6,7 +6,7 @@
         public string Name { get; set; }
         public string Description { get; set; }
 
-        public DateTime LastModified { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public long UserId { get; set; }
         public UserModel User { get; set; }

@@ -16,6 +16,8 @@
 
         public long UserId { get; set; }
         public UserModel User { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? CompletedAt { get; set; }
 
         public ICollection<TaskHistoryModel> Histories { get; set; } = new List<TaskHistoryModel>();
         public ICollection<TaskCommentModel> Comments { get; set; } = new List<TaskCommentModel>();

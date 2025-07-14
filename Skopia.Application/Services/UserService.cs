@@ -14,5 +14,14 @@ namespace Skopia.Application.Services
         {
             return await _dbContext.Users.AnyAsync(p => p.Id == id);
         }
+
+        public async Task<bool> IsManager(long userId)
+        {
+            var user = await _dbContext.Users
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
+            return user?.Role == "mgr";
+        }
     }
 }

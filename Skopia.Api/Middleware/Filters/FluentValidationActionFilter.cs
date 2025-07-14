@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Skopia.Api.Middleware
+namespace Skopia.Api.Middleware.Filters
 {
     public class FluentValidationActionFilter : IAsyncActionFilter
     {

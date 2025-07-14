@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Skopia.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class AddAdjustedTablesSkopiaStart : Migration
+    public partial class SkopiaInitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -35,7 +35,7 @@ namespace Skopia.Infrastructure.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     Description = table.Column<string>(type: "TEXT", nullable: false),
-                    LastModified = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     UserId = table.Column<long>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -62,7 +62,9 @@ namespace Skopia.Infrastructure.Migrations
                     ExpirationDate = table.Column<DateTime>(type: "TEXT", nullable: true),
                     LastModified = table.Column<DateTime>(type: "TEXT", nullable: false),
                     ProjectId = table.Column<long>(type: "INTEGER", nullable: false),
-                    UserId = table.Column<long>(type: "INTEGER", nullable: false)
+                    UserId = table.Column<long>(type: "INTEGER", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    CompletedAt = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -144,10 +146,11 @@ namespace Skopia.Infrastructure.Migrations
                 columns: new[] { "Id", "Name", "Role" },
                 values: new object[,]
                 {
-                    { 1L, "Administrador do JIRA", "admin" },
-                    { 2L, "Agile Master", "manager" },
-                    { 3L, "Product Owner", "po" },
-                    { 4L, "Common User", "user" }
+                    { 1L, "Administrador do JIRA", "adm" },
+                    { 2L, "Project Manager", "mgr" },
+                    { 3L, "Agile Master", "am" },
+                    { 4L, "Product Owner", "po" },
+                    { 5L, "Common User", "usr" }
                 });
 
             migrationBuilder.CreateIndex(

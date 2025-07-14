@@ -1,6 +1,7 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Skopia.Api.Middleware;
+using Skopia.Api.Middleware.Filters;
 using Skopia.Application.Contracts;
 using Skopia.Application.Mappers;
 using Skopia.Application.Services;
@@ -24,6 +25,7 @@ builder.Services.AddScoped<ITaskService, TaskService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITaskHistoryService, TaskHistoryService>();
 builder.Services.AddScoped<ITaskCommentService, TaskCommentService>();
+builder.Services.AddScoped<IReportsService, ReportsService>();
 
 builder.Services.AddDbContext<SkopiaDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));

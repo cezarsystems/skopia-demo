@@ -11,8 +11,8 @@ using Skopia.Infrastructure.Data;
 namespace Skopia.Infrastructure.Migrations
 {
     [DbContext(typeof(SkopiaDbContext))]
-    [Migration("20250713174130_AddAdjustedTablesSkopiaStart")]
-    partial class AddAdjustedTablesSkopiaStart
+    [Migration("20250714023203_SkopiaInitialMigration")]
+    partial class SkopiaInitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,11 +26,11 @@ namespace Skopia.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("LastModified")
+                    b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
@@ -115,6 +115,12 @@ namespace Skopia.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -175,25 +181,31 @@ namespace Skopia.Infrastructure.Migrations
                         {
                             Id = 1L,
                             Name = "Administrador do JIRA",
-                            Role = "admin"
+                            Role = "adm"
                         },
                         new
                         {
                             Id = 2L,
-                            Name = "Agile Master",
-                            Role = "manager"
+                            Name = "Project Manager",
+                            Role = "mgr"
                         },
                         new
                         {
                             Id = 3L,
+                            Name = "Agile Master",
+                            Role = "am"
+                        },
+                        new
+                        {
+                            Id = 4L,
                             Name = "Product Owner",
                             Role = "po"
                         },
                         new
                         {
-                            Id = 4L,
+                            Id = 5L,
                             Name = "Common User",
-                            Role = "user"
+                            Role = "usr"
                         });
                 });
 

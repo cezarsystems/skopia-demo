@@ -22,7 +22,7 @@ namespace Skopia.Application.Services
         public async Task<ProjectResponseDTO> PostAsync(ProjectRequestDTO request)
         {
             var newProject = _mapper.Map<ProjectModel>(request);
-            newProject.LastModified = DateTime.Now;
+            newProject.CreatedAt = DateTime.Now;
             newProject.Tasks = [];
 
             _dbContext.Projects.Add(newProject);
@@ -35,7 +35,7 @@ namespace Skopia.Application.Services
             return _mapper.Map<ProjectResponseDTO>(newProject);
         }
 
-        public async Task<OperationResultModel> DeleteAsync(long id)
+        public async Task<OperationResponseDTO> DeleteAsync(long id)
         {
             var project = await _dbContext.Projects
                 .Include(p => p.Tasks)
@@ -43,20 +43,20 @@ namespace Skopia.Application.Services
 
             if (project == null)
             {
-                return OperationResultModel.Fail("Projeto não encontrado. Favor confirmar seu identificador.");
+                return OperationResponseDTO.Fail("Projeto não encontrado. Favor confirmar seu identificador.");
             }
 
             var hasPendingTasks = project.Tasks?.Any(t => t.Status == StatusEnum.P.ToString()) == true;
 
             if (hasPendingTasks)
             {
-                return OperationResultModel.Fail("Não é possível excluir o projeto, pois existem tarefas com status: Pendente. Favor concluí-las ou removê-las antes da exclusão");
+                return OperationResponseDTO.Fail("Não é possível excluir o projeto, pois existem tarefas com status: Pendente. Favor concluí-las ou removê-las antes da exclusão");
             }
 
             _dbContext.Projects.Remove(project);
             await _dbContext.SaveChangesAsync();
 
-            return OperationResultModel.Ok();
+            return OperationResponseDTO.Ok();
         }
 
         public async Task<IEnumerable<ProjectResponseDTO>> GetAllAsync()
