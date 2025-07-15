@@ -5,7 +5,7 @@
 
 # Skopia
 coveragereport
-Skopia.Api/Data
+Skopia.Api/Data/
 Skopia.Tests/coveragereport
 Skopia.Tests/TestResults
 
