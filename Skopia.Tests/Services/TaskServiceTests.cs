@@ -134,7 +134,7 @@ namespace Skopia.Tests.Services
             Assert.False(exists);
         }
 
-        [Fact]
+        [Fact(DisplayName = "GetAllAsync obtém todos as tarefas registradas na base de dados")]
         public async Task GetAllAsync_ReturnsAllTasks()
         {
             // Act & Assert

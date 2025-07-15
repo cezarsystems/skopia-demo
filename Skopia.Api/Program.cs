@@ -33,7 +33,7 @@ builder.Services.AddSwaggerGen(options =>
         },
         Title = "Demo API Projects - Skopia",
         Version = "v1",
-        Description = "Documentação oficial da Demo API Projects - Skopia",
+        Description = "Documenta&#xE7;&#xE3;o oficial da Demo API Projects - Skopia",
         Contact = new OpenApiContact
         {
             Name = "Cezar Lisboa",
@@ -59,15 +59,26 @@ builder.Services.AddDbContext<SkopiaDbContext>(options =>
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 app.UseMiddleware<ErrorHandlingInterceptor>();
 app.UseAuthorization();
+
+// Rodando local
+if (app.Environment.IsDevelopment())
+{
+    var dbPath = Path.Combine(AppContext.BaseDirectory, "Data");
+    Directory.CreateDirectory(dbPath);
+}
+
+// Vai criar a base se não existir
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<SkopiaDbContext>();
+    db.Database.EnsureCreated();
+}
 
 app.MapControllers();
 app.Run();

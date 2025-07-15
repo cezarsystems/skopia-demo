@@ -1,0 +1,12 @@
+﻿services:
+  skopia-api:
+    container_name: demo-skopia
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    volumes:
+      - ./skopia.db:/app/skopia.db
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development

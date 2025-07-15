@@ -4,9 +4,13 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 # Skopia
-Skopia.Api/DataBase
+coveragereport
+Skopia.Api/Data
 Skopia.Tests/coveragereport
 Skopia.Tests/TestResults
+
+# GitHub
+.github
 
 # User-specific files
 *.rsuser

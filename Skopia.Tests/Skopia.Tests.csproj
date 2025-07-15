@@ -6,12 +6,21 @@
     <Nullable>enable</Nullable>
     <IsTestProject>true</IsTestProject>
     <IsPackable>false</IsPackable>
+
     <CollectCoverage>true</CollectCoverage>
     <CoverletOutputFormat>lcov</CoverletOutputFormat>
     <Threshold>80</Threshold>
     <ThresholdType>line</ThresholdType>
     <ThresholdStat>Total</ThresholdStat>
+
     <ExcludeByFile>**/Skopia.Infrastructure/Migrations/*.cs</ExcludeByFile>
+
+    <Exclude>
+      [Skopia.Infrastructure.Migrations*]*;
+      [Skopia.Infrastructure.Configurations.SkopiaDbContextFactory]*;
+      [Skopia.Infrastructure.Data.SkopiaDbContext]*;
+      [Skopia.Infrastructure.Configurations.*]*;
+    </Exclude>
   </PropertyGroup>
 
   <ItemGroup>
@@ -33,15 +42,11 @@
     <PackageReference Include="Moq" Version="4.20.72" />
     <PackageReference Include="xunit" Version="2.5.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Using Include="Xunit" />
     <PackageReference Include="coverlet.collector" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Validators\" />
+    <Using Include="Xunit" />
   </ItemGroup>
 
   <ItemGroup>
