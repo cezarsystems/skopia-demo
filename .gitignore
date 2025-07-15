@@ -5,7 +5,8 @@
 
 # Skopia
 coveragereport
-Skopia.Api/Data/
+*.db
+!Skopia.Api/Data/.gitkeep
 Skopia.Tests/coveragereport
 Skopia.Tests/TestResults
 
